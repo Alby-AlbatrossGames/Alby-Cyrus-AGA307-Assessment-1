@@ -8,8 +8,12 @@ public class TargetManager : Singleton<TargetManager>
     public Transform[] spawnPoints;
     public GameObject[] targetTypes;
     public List<GameObject> targets;
-    
-    
+    private ScoreManager _SM;
+
+    private void Start()
+    {
+        _SM = GetComponent<ScoreManager>();
+    }
 
     private void Update()
     {
@@ -31,10 +35,11 @@ public class TargetManager : Singleton<TargetManager>
     {
         GameObject target = Instantiate(_target, _spawnPoint);
         targets.Add(target);
+        _SM.updateTargetUI();
         target.GetComponent<Target>().Setup();
     }
 
-    int GetTargetCount()
+    public int GetTargetCount()
     {
         return targets.Count;
     }
@@ -45,6 +50,7 @@ public class TargetManager : Singleton<TargetManager>
             return;
         Destroy(_target);
         targets.Remove(_target);
+        _SM.updateTargetUI();
     }
 
     public void Resize(float _scale, GameObject _target) => transform.localScale = new Vector3(_scale, (_scale * 0.01f), _scale);
