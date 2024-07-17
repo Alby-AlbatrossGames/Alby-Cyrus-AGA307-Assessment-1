@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum TargetSize { Small, Medium, Large, }
-public class TargetManager : MonoBehaviour
+public class TargetManager : Singleton<TargetManager>
 {
     public Transform[] spawnPoints;
     public GameObject[] targetTypes;
+    public List<GameObject> targets;
     
     
 
@@ -29,6 +30,30 @@ public class TargetManager : MonoBehaviour
     void spawnTarget(GameObject _target, Transform _spawnPoint)
     {
         GameObject target = Instantiate(_target, _spawnPoint);
+        targets.Add(target);
         target.GetComponent<Target>().Setup();
+    }
+
+    int GetTargetCount()
+    {
+        return targets.Count;
+    }
+
+    public void DestroyTarget(GameObject _target)
+    {
+        if (GetTargetCount() == 0)
+            return;
+        Destroy(_target);
+        targets.Remove(_target);
+    }
+
+    public void Resize(float _scale, GameObject _target) => transform.localScale = new Vector3(_scale, (_scale * 0.01f), _scale);
+
+    public void ResizeAll(float _scale)
+    {
+        for (int i = 0; i < targets.Count; i++)
+        {
+            Resize(_scale, targets[i]);
+        }
     }
 }
